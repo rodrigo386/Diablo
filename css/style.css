@@ -1,0 +1,150 @@
+:root {
+  --gold: #f2c14e;
+  --gold-dark: #9c7426;
+  --wood: #3a2616;
+  --wood-dark: #1f140b;
+  --parch: #f3e3c0;
+  --ink: #1a120b;
+  --red: #c8281e;
+  --panel: rgba(22, 15, 9, 0.94);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: #0c3a57; font-family: Nunito, system-ui, sans-serif; color: var(--parch); user-select: none; }
+canvas#game { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; cursor: crosshair; }
+.hidden { display: none !important; }
+button { font-family: inherit; }
+
+/* ---------- HUD ---------- */
+#hud { position: fixed; inset: 0; pointer-events: none; }
+#hud > * { pointer-events: auto; }
+#info { position: absolute; top: 12px; left: 14px; background: var(--panel); border: 2px solid var(--gold-dark); border-radius: 10px; padding: 8px 14px; min-width: 190px; pointer-events: none; }
+#info-name { font-family: 'Pirata One', serif; font-size: 22px; line-height: 1.1; }
+.info-row { font-size: 13px; opacity: .85; }
+#info-berries { color: var(--gold); font-weight: 900; font-size: 15px; }
+#objective { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,.55); border-radius: 8px; padding: 6px 14px; font-size: 13px; text-align: center; pointer-events: none; }
+#objective small { opacity: .7; }
+#minimap { position: absolute; top: 12px; right: 14px; background: rgba(5, 25, 40, .75); border: 2px solid var(--gold-dark); border-radius: 10px; pointer-events: none; }
+#btn-mute { position: absolute; top: 180px; right: 14px; background: var(--panel); border: 2px solid var(--gold-dark); border-radius: 8px; color: #fff; font-size: 16px; padding: 3px 8px; cursor: pointer; }
+#hint { position: absolute; right: 14px; bottom: 10px; font-size: 11px; opacity: .55; pointer-events: none; }
+
+#bossbar { position: absolute; top: 58px; left: 50%; transform: translateX(-50%); width: min(560px, 70vw); text-align: center; pointer-events: none; }
+#boss-name { font-family: 'Pirata One', serif; font-size: 24px; color: #ffd0c8; text-shadow: 0 2px 0 #000, 0 0 12px #c00; }
+#bossbar .bar { height: 16px; background: #1a0605; border: 2px solid #7a1a12; border-radius: 4px; overflow: hidden; box-shadow: 0 0 14px #000; }
+#boss-fill { height: 100%; width: 100%; background: linear-gradient(#ff5a4a, #a3140c); transition: width .15s; }
+
+#bottom { position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%); display: flex; align-items: flex-end; gap: 14px; }
+.orb { position: relative; width: 104px; height: 104px; border-radius: 50%; overflow: hidden; background: #120b08; border: 4px solid var(--gold-dark); box-shadow: 0 0 0 2px #000, 0 6px 18px #000a; pointer-events: none; }
+.orb-fill { position: absolute; left: 0; right: 0; bottom: 0; height: 100%; transition: height .12s; }
+#orb-hp .orb-fill { background: radial-gradient(circle at 40% 30%, #ff6b5a, #b5170e 55%, #5a0703); }
+#orb-en .orb-fill { background: radial-gradient(circle at 40% 30%, #6fd0ff, #1667c4 55%, #062a5a); }
+.orb-gloss { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at 35% 25%, rgba(255,255,255,.45), transparent 35%); }
+.orb span { position: absolute; inset: 0; display: grid; place-items: center; font-weight: 900; font-size: 17px; text-shadow: 0 2px 2px #000; }
+
+#center { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+#buffs { display: flex; gap: 6px; min-height: 22px; }
+.buff { background: var(--panel); border: 1px solid var(--gold); border-radius: 6px; padding: 2px 8px; font-size: 12px; }
+#skills { display: flex; gap: 6px; padding: 6px; background: linear-gradient(var(--wood), var(--wood-dark)); border: 2px solid var(--gold-dark); border-radius: 10px; box-shadow: 0 6px 18px #000a; }
+.slot { position: relative; width: 56px; height: 56px; border-radius: 8px; background: #0e0905; border: 2px solid #6b5232; overflow: hidden; display: grid; place-items: center; }
+.slot.small { width: 46px; height: 46px; align-self: flex-end; }
+.slot .icon { font-size: 28px; filter: drop-shadow(0 2px 1px #000); }
+.slot.small .icon { font-size: 22px; }
+.slot .cd { position: absolute; left: 0; right: 0; bottom: 0; height: 0; background: rgba(0,0,0,.72); }
+.slot .cdtext { position: absolute; inset: 0; display: grid; place-items: center; font-weight: 900; font-size: 18px; text-shadow: 0 0 4px #000; }
+.slot .key { position: absolute; left: 3px; top: 1px; font-size: 10px; font-weight: 900; color: var(--gold); text-shadow: 0 1px 1px #000; }
+.slot .count { position: absolute; right: 3px; bottom: 1px; font-size: 12px; font-weight: 900; text-shadow: 0 1px 2px #000; }
+.slot .lock { position: absolute; inset: 0; display: none; place-items: center; font-size: 18px; background: rgba(0,0,0,.65); }
+.slot.locked .lock { display: grid; }
+.slot.locked .icon { filter: grayscale(1) brightness(.5); }
+.slot.noen { border-color: #2a4f9a; }
+.slot.noen .icon { filter: saturate(.3) brightness(.7); }
+
+#xpbar { position: relative; width: 100%; height: 12px; background: #120b08; border: 1px solid var(--gold-dark); border-radius: 6px; overflow: hidden; pointer-events: none; }
+#xp-fill { height: 100%; background: linear-gradient(#ffe48a, #c9922a); width: 0; transition: width .2s; }
+#xp-text { position: absolute; inset: 0; font-size: 9px; font-weight: 900; display: grid; place-items: center; text-shadow: 0 1px 1px #000; }
+
+#banner { position: absolute; top: 24%; left: 0; right: 0; text-align: center; opacity: 0; pointer-events: none; }
+#banner .big { font-family: 'Pirata One', serif; font-size: clamp(42px, 7vw, 86px); color: var(--gold); text-shadow: 0 4px 0 #3a1a00, 0 0 30px #000; letter-spacing: 2px; }
+#banner .small { font-size: 18px; font-weight: 800; text-shadow: 0 2px 4px #000; }
+#banner.show { animation: banner 3.4s ease forwards; }
+@keyframes banner { 0% { opacity: 0; transform: scale(1.3); } 12% { opacity: 1; transform: scale(1); } 75% { opacity: 1; } 100% { opacity: 0; } }
+
+#toasts { position: absolute; top: 120px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 4px; pointer-events: none; }
+.toast { background: rgba(10, 6, 3, .85); border: 1px solid #6b5232; border-radius: 6px; padding: 4px 12px; font-size: 13px; transition: opacity .5s; text-align: center; }
+.toast.warn { border-color: #a33; color: #ffb3a8; }
+.toast.legendary { border-color: #ff8c1a; color: #ffcf8a; box-shadow: 0 0 12px #ff8c1a66; }
+.toast.out { opacity: 0; }
+
+/* ---------- Painéis ---------- */
+.panel { position: fixed; top: 70px; background: var(--panel); border: 2px solid var(--gold-dark); border-radius: 12px; padding: 12px 14px; box-shadow: 0 10px 40px #000c; z-index: 5; }
+#inventory { right: 14px; width: 340px; }
+#charpanel { left: 14px; width: 300px; top: 110px; }
+.panel-head { display: flex; justify-content: space-between; align-items: center; }
+.panel h2 { font-family: 'Pirata One', serif; margin: 0; color: var(--gold); font-weight: 400; font-size: 28px; }
+.panel .x { background: none; border: none; color: var(--parch); font-size: 18px; cursor: pointer; }
+.panel-sub { margin: 10px 0 6px; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; opacity: .7; display: flex; justify-content: space-between; }
+#inv-berries { color: var(--gold); opacity: 1; font-weight: 900; }
+.panel-foot { font-size: 11px; opacity: .6; margin-top: 8px; }
+#equip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+#bag { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+.cell { position: relative; aspect-ratio: 1; background: #0e0905; border: 2px solid #3d2e1c; border-radius: 6px; display: grid; place-items: center; font-size: 24px; cursor: pointer; }
+.cell:hover { background: #2a1d10; }
+.equip-cell { font-size: 30px; }
+.equip-cell small { font-size: 10px; opacity: .5; }
+.cell .up { position: absolute; right: 2px; top: 0; font-size: 10px; color: #6bff7a; font-style: normal; }
+#stats > div { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #ffffff12; font-size: 14px; }
+#stats b { color: var(--gold); }
+
+#tooltip { position: fixed; z-index: 20; display: flex; gap: 8px; pointer-events: none; }
+.tt-col { background: rgba(8, 5, 3, .96); border: 2px solid #6b5232; border-radius: 8px; padding: 10px 12px; width: 260px; font-size: 13px; }
+.tt-col.equipped { opacity: .85; }
+.tt-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; opacity: .6; margin-bottom: 4px; }
+.tt-name { font-weight: 900; font-size: 16px; }
+.tt-type { opacity: .7; font-size: 12px; margin-bottom: 6px; }
+.tt-base { font-size: 13px; }
+.tt-base b { font-size: 18px; }
+.tt-affixes { margin-top: 6px; color: #8fb1ff; }
+.tt-affixes .fixed { color: #ffb36b; }
+.tt-flavor { margin-top: 8px; font-style: italic; color: #d6b98a; }
+.tt-sell { margin-top: 8px; font-size: 11px; color: var(--gold); opacity: .8; }
+.tt-hint { margin-top: 4px; font-size: 11px; opacity: .5; }
+.tt-desc { line-height: 1.35; }
+.tt-warn { color: #ff8a7a; margin-top: 6px; font-weight: 800; }
+
+/* ---------- Telas ---------- */
+.screen { position: fixed; inset: 0; display: grid; place-items: center; background: radial-gradient(circle at 50% 30%, rgba(12,58,87,.35), rgba(3,10,18,.88)); z-index: 10; overflow: auto; }
+#menu { background: radial-gradient(circle at 50% 20%, rgba(255,210,120,.18), rgba(3,12,22,.75) 70%); }
+.menu-inner { text-align: center; padding: 24px 16px; max-width: 1000px; }
+#menu h1 { font-family: 'Pirata One', serif; font-weight: 400; font-size: clamp(54px, 9vw, 110px); margin: 0; color: var(--gold); text-shadow: 0 5px 0 #6a3a00, 0 0 40px #000; letter-spacing: 3px; }
+.sub { margin: 0 0 22px; font-size: 17px; opacity: .9; }
+#cards { display: flex; flex-wrap: wrap; gap: 18px; justify-content: center; }
+.card { --accent: #fff; width: 250px; background: linear-gradient(#2c1c10, #160e07); border: 3px solid #6b5232; border-radius: 14px; padding: 10px 14px 14px; color: var(--parch); cursor: pointer; transition: transform .15s, border-color .15s, box-shadow .15s; text-align: center; }
+.card:hover { transform: translateY(-6px); border-color: var(--accent); box-shadow: 0 0 30px color-mix(in srgb, var(--accent) 50%, transparent); }
+.card canvas { width: 220px; height: 200px; background: radial-gradient(circle at 50% 70%, color-mix(in srgb, var(--accent) 30%, transparent), transparent 65%); border-radius: 10px; }
+.card-name { font-family: 'Pirata One', serif; font-size: 28px; color: var(--accent); line-height: 1; }
+.card-title { font-size: 13px; opacity: .7; margin-bottom: 6px; }
+.card-desc { font-size: 13px; line-height: 1.35; min-height: 52px; }
+.card-save { margin-top: 8px; font-size: 12px; color: var(--gold); font-weight: 800; }
+#controls { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 18px; margin: 24px auto 10px; max-width: 760px; font-size: 13px; }
+kbd { display: inline-block; background: #f3e3c0; color: var(--ink); border-radius: 4px; padding: 1px 6px; margin-right: 3px; font-family: inherit; font-weight: 900; font-size: 11px; box-shadow: 0 2px 0 #8a7650; }
+.disclaimer { font-size: 11px; opacity: .5; }
+
+.dialog { background: var(--panel); border: 3px solid var(--gold-dark); border-radius: 16px; padding: 26px 34px; text-align: center; min-width: 320px; max-width: 90vw; box-shadow: 0 20px 60px #000; }
+.dialog h2 { font-family: 'Pirata One', serif; font-weight: 400; font-size: 44px; margin: 0 0 10px; color: var(--gold); }
+.dialog h2.red { color: #ff6a5a; }
+.dialog .btn { display: block; width: 100%; margin-top: 10px; }
+.btn { background: linear-gradient(#e9b949, #b7832a); color: var(--ink); border: 2px solid #f6d98a; border-radius: 10px; padding: 10px 20px; font-weight: 900; font-size: 16px; cursor: pointer; }
+.btn:hover { filter: brightness(1.1); }
+.btn.ghost { background: transparent; color: var(--parch); border-color: #6b5232; }
+#victory-stats { margin: 14px 0; text-align: left; }
+#victory-stats > div { display: flex; justify-content: space-between; gap: 30px; padding: 4px 0; border-bottom: 1px solid #ffffff14; }
+#victory-stats b { color: var(--gold); }
+
+@media (max-width: 760px) {
+  .orb { width: 74px; height: 74px; }
+  .slot { width: 42px; height: 42px; }
+  .slot.small { width: 36px; height: 36px; }
+  .slot .icon { font-size: 20px; }
+  #minimap { width: 150px; height: 110px; }
+  #inventory { width: calc(100vw - 28px); }
+}

@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Straw Hat Slash</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;700;800;900&family=Pirata+One&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<canvas id="game"></canvas>
+
+<!-- ================= HUD ================= -->
+<div id="hud" class="hidden">
+  <div id="info">
+    <div id="info-name"></div>
+    <div class="info-row"><span id="info-level"></span> · <span id="info-ng"></span></div>
+    <div id="info-berries"></div>
+  </div>
+  <div id="objective"></div>
+  <div id="bossbar" class="hidden"><div id="boss-name"></div><div class="bar"><div id="boss-fill"></div></div></div>
+  <canvas id="minimap" width="220" height="160"></canvas>
+  <button id="btn-mute" title="Som (M)">🔊</button>
+
+  <div id="bottom">
+    <div class="orb" id="orb-hp"><div class="orb-fill"></div><div class="orb-gloss"></div><span></span></div>
+    <div id="center">
+      <div id="buffs"></div>
+      <div id="skills"></div>
+      <div id="xpbar"><div id="xp-fill"></div><span id="xp-text"></span></div>
+    </div>
+    <div class="orb" id="orb-en"><div class="orb-fill"></div><div class="orb-gloss"></div><span></span></div>
+  </div>
+
+  <div id="banner"><div class="big"></div><div class="small"></div></div>
+  <div id="toasts"></div>
+  <div id="hint">I inventário · C personagem · F pegar item · Tab mapa · Esc pausa</div>
+</div>
+
+<!-- ================= Painéis ================= -->
+<div id="inventory" class="panel hidden">
+  <div class="panel-head"><h2>Inventário</h2><button id="inv-close" class="x">✕</button></div>
+  <div class="panel-sub">Equipado</div>
+  <div id="equip"></div>
+  <div class="panel-sub">Bolsa <span id="inv-berries"></span></div>
+  <div id="bag"></div>
+  <div class="panel-foot">Clique: equipar · Botão direito: vender · ▲ = parece melhor</div>
+</div>
+
+<div id="charpanel" class="panel hidden">
+  <div class="panel-head"><h2>Personagem</h2><button id="char-close" class="x">✕</button></div>
+  <div id="stats"></div>
+</div>
+
+<div id="tooltip" class="hidden"></div>
+
+<!-- ================= Telas ================= -->
+<div id="menu" class="screen">
+  <div class="menu-inner">
+    <h1>Straw Hat Slash</h1>
+    <p class="sub">Um hack 'n' slash de fã no estilo Diablo — invada Arlong Park!</p>
+    <div id="cards"></div>
+    <div id="controls">
+      <div><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> mover</div>
+      <div><kbd>Mouse</kbd> mirar</div>
+      <div><kbd>LMB</kbd> ataque básico</div>
+      <div><kbd>RMB</kbd> habilidade</div>
+      <div><kbd>Q</kbd><kbd>E</kbd><kbd>R</kbd> habilidades</div>
+      <div><kbd>Espaço</kbd> esquiva</div>
+      <div><kbd>1</kbd> comer carne</div>
+      <div><kbd>I</kbd> inventário · <kbd>C</kbd> status</div>
+    </div>
+    <p class="disclaimer">Projeto de fã, sem fins lucrativos. One Piece © Eiichiro Oda / Shueisha / Toei Animation.</p>
+  </div>
+</div>
+
+<div id="pause" class="screen hidden">
+  <div class="dialog">
+    <h2>Pausado</h2>
+    <button id="btn-resume" class="btn">Continuar</button>
+    <button id="btn-quit" class="btn ghost">Salvar e voltar ao menu</button>
+  </div>
+</div>
+
+<div id="death" class="screen hidden">
+  <div class="dialog">
+    <h2 class="red">Você foi derrotado!</h2>
+    <p id="death-text"></p>
+    <button id="btn-respawn" class="btn">Renascer na praia</button>
+    <button id="btn-death-menu" class="btn ghost">Menu</button>
+  </div>
+</div>
+
+<div id="victory" class="screen hidden">
+  <div class="dialog">
+    <h2 class="gold">Arlong Park libertado!</h2>
+    <p>"Luffy... me ajuda." — "É claro que eu ajudo!"</p>
+    <div id="victory-stats"></div>
+    <button id="btn-next" class="btn">Próxima jornada →</button>
+    <button id="btn-victory-menu" class="btn ghost">Menu</button>
+  </div>
+</div>
+
+<script src="assets/sprites/sprites.js"></script>
+<script src="js/core.js"></script>
+<script src="js/map.js"></script>
+<script src="js/fx.js"></script>
+<script src="js/draw.js"></script>
+<script src="js/items.js"></script>
+<script src="js/characters.js"></script>
+<script src="js/combat.js"></script>
+<script src="js/player.js"></script>
+<script src="js/enemies.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>
